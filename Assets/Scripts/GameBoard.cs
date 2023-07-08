@@ -22,7 +22,7 @@ public class GameBoard : MonoBehaviour
     private float tickWaitTime = 0.5f;
     private float timeSinceTick = 0;
     
-    private Dictionary<Vector3Int, Entity> entities;
+    private List<Entity> entities;
     
 
     private const int LEFT_CLICK = 0;
@@ -51,17 +51,17 @@ public class GameBoard : MonoBehaviour
             // var tile = gameTilemap.GetTile(pos);
             var tileTypesIndices = pos - gameTilemap.cellBounds.position;
 
-            if (tile == null || tile.name == "NoBuildSpace")
+            if (tile == null || tile.name == "BuildSpace")
             {
-                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.NoBuildSpace;
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.BuildSpace;
             }
             else if (tile.name == "Ground")
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Ground;
             }
-            else if (tile.name == "BuildSpace")
+            else if (tile.name == "NoBuildSpace")
             {
-                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.BuildSpace;
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.NoBuildSpace;
             }
             else if (tile.name == "AdventurerStart")
             {
@@ -74,9 +74,10 @@ public class GameBoard : MonoBehaviour
         }
         
         // remove this when start button works!!
-        entities = new Dictionary<Vector3Int, Entity>();
+        
         InitEntities();
         
+        StartSimulation();
     }
 
     TileType GetTileType(Vector3Int pos)
@@ -155,8 +156,10 @@ public class GameBoard : MonoBehaviour
             {
                 var go = Instantiate(prefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity, grid.transform);
 
-                entities[pos] = go.GetComponent<Entity>();
-                // return entities[pos];
+                var entity = go.GetComponent<Entity>();
+                entity.pos = pos;
+                entity.dir = Vector3Int.right;
+                entities.Add(entity);
             }
         }
 
@@ -165,14 +168,15 @@ public class GameBoard : MonoBehaviour
 
     void InitEntities()
     {
+        entities = new List<Entity>();
+        
         for (int x = 0; x < tileTypes.GetLength(0); x++)
         {
             for (int y = 0; y < tileTypes.GetLength(1); y++)
             {
                 if (tileTypes[x, y] == TileType.AdventurerStart)
                 {
-                    Debug.Log("instantiate");
-                    InstantiateEntity(Entity.EntityType.Adventurer, new Vector3Int(x, y));
+                    InstantiateEntity(Entity.EntityType.Adventurer, new Vector3Int(x, y) + gameTilemap.cellBounds.position);
                 }
             }
         }
@@ -191,26 +195,41 @@ public class GameBoard : MonoBehaviour
 
     void Simulate()
     {
+        foreach (var e in entities)
+        {
+            if (IsSolid(e.pos + Vector3Int.down))
+            {
+                // move
+                if (!IsSolid(e.pos + e.dir) && !IsSolid(e.pos + e.dir + Vector3Int.up))
+                {
+                    if (e.waitTicks == e.waitTicksCount)
+                    {
+                        e.pos += e.dir * e.speed;
+                        e.waitTicksCount = 0;
+                    }
+                    else
+                    {
+                        e.waitTicksCount++;
+                    }
+                }
+                else
+                {
+                    if (e.dir == Vector3Int.right)
+                    {
+                        e.dir = Vector3Int.left;
+                    }
+                    else
+                    {
+                        e.dir = Vector3Int.right;
+                    }
+                }
+            }
+            else // fall
+            {
+                e.pos += Vector3Int.down;
+            }
+        }
         
     }
 
-    public void OnClick(TileType tileType, Tilemap tilemap, Vector3Int pos)
-    {
-        
-        switch (tileType)
-        {
-            case TileType.Ground:
-            {
-                Debug.Log($"ground x:{pos.x} y:{pos.y}");
-                break;
-            } 
-            case TileType.BuildSpace:
-            {
-                Debug.Log($"air x:{pos.x} y:{pos.y}");
-                tilemap.SetTile(pos, buildTile);
-                break;
-            }
-        }
-    }
-    
 }
