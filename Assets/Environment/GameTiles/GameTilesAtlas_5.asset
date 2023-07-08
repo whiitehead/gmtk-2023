@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: GameTilesAtlas_5
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 110003352, guid: 77dcb781211164b4c8b55494981650eb, type: 3}
+  m_Sprite: {fileID: 75544796, guid: eef8e47e0494f8c48ae36376336a7800, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
