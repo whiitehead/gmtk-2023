@@ -36,6 +36,7 @@ public class GameBoard : MonoBehaviour
         StartButton,
         AdventurerStart,
         OutOfBounds,
+        Lava,
     }
     
     void Start()
@@ -71,6 +72,10 @@ public class GameBoard : MonoBehaviour
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.StartButton;
             }
+            else if (tile.name == "Lava")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Lava;
+            }
         }
         
         // remove this when start button works!!
@@ -97,6 +102,18 @@ public class GameBoard : MonoBehaviour
         var tileType = GetTileType(pos);
 
         if (tileType == TileType.Ground)
+        {
+            return true;
+        }
+
+        return tileType == TileType.BuildSpace && buildTilemap.HasTile(pos);
+    }
+
+    bool IsLava(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Lava)
         {
             return true;
         }
@@ -138,7 +155,6 @@ public class GameBoard : MonoBehaviour
         }
 
         timeSinceTick += Time.deltaTime;
-        
         if (isSimulating && tickWaitTime < timeSinceTick)
         {
             timeSinceTick -= tickWaitTime;
@@ -159,8 +175,12 @@ public class GameBoard : MonoBehaviour
                 var entity = go.GetComponent<Entity>();
                 entity.pos = pos;
                 entity.dir = Vector3Int.right;
+                // TODO: change this later. Not everything has health of 3.
+                entity.health = 3;
                 entities.Add(entity);
             }
+            // TODO: maybe check which entity type here and just hard-code attributes like health/maxTicks
+            // e.g if entityType == ""Adventurer"
         }
 
         // return null;
@@ -197,25 +217,16 @@ public class GameBoard : MonoBehaviour
     {
         foreach (var e in entities)
         {
-            if (IsSolid(e.pos + Vector3Int.down))
+            if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
-                // move
-                if (!IsSolid(e.pos + e.dir) && !IsSolid(e.pos + e.dir + Vector3Int.up))
+                // e.waitTicks = e.max
+                if (IsSolid(e.pos + e.dir + Vector3Int.up)) // solid at face
                 {
-                    if (e.waitTicks == e.waitTicksCount)
+                    // switch directions! 
+                    if (e.dir == Vector3Int.right)
                     {
                         e.pos += e.dir;
                         e.waitTicksCount = 0;
-                    }
-                    else
-                    {
-                        e.waitTicksCount++;
-                    }
-                }
-                else
-                {
-                    if (e.dir == Vector3Int.right)
-                    {
                         e.dir = Vector3Int.left;
                     }
                     else
@@ -223,11 +234,50 @@ public class GameBoard : MonoBehaviour
                         e.dir = Vector3Int.right;
                     }
                 }
+                else // move forward is possible
+                {
+                    if (IsSolid(e.pos + e.dir)) // jump
+                    {
+                        if (e.waitTicks == e.waitTicksCount)
+                        {
+                            e.pos += e.dir + Vector3Int.up;
+                            e.waitTicksCount = 0;
+                        }
+                        else
+                        {
+                            e.waitTicksCount++;
+                        }
+                    }
+                    else // forward
+                    {
+                        if (e.waitTicks == e.waitTicksCount)
+                        {
+                            e.pos += e.dir;
+                            e.waitTicksCount = 0;
+                        }
+                        else
+                        {
+                            e.waitTicksCount++;
+                        }
+                    }
+
+                }   
+            }
+            else if (IsLava(e.pos + Vector3Int.down)) // lava
+            {
+                // instant death
+                e.health = 0;
             }
             else // fall
             {
+                // increase speed
                 e.pos += Vector3Int.down;
+                // 
             }
+            if (e.health == 0) {
+                Debug.Log("Dead!");
+            }
+
         }
         
     }
