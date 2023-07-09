@@ -44,6 +44,8 @@ public class GameBoard : MonoBehaviour
         cam = Camera.main;
         tileTypes = new TileType[gameTilemap.cellBounds.size.x, gameTilemap.cellBounds.size.y];
 
+        var time = Time.time;
+
         foreach (var pos in gameTilemap.cellBounds.allPositionsWithin)
         {
             var worldPos = gameTilemap.CellToWorld(pos);
@@ -72,12 +74,14 @@ public class GameBoard : MonoBehaviour
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.StartButton;
             }
         }
+
+        Debug.Log(Time.time - time);
+        time = Time.time;
         
         // remove this when start button works!!
         
         InitEntities();
-        
-        StartSimulation();
+        Debug.Log(Time.time - time);
     }
 
     TileType GetTileType(Vector3Int pos)
@@ -111,11 +115,6 @@ public class GameBoard : MonoBehaviour
         var pos = grid.WorldToCell(mousePos);
         var tileType = GetTileType(pos);
 
-        if (tileType == TileType.OutOfBounds)
-        {
-            return;
-        }
-
         if (Input.GetMouseButtonDown(LEFT_CLICK))
         {
             if (tileType == TileType.BuildSpace)
@@ -135,6 +134,12 @@ public class GameBoard : MonoBehaviour
                     buildTilemap.SetTile(pos, null);
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("STARTED");
+            StartSimulation();
         }
 
         timeSinceTick += Time.deltaTime;

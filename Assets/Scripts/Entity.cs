@@ -34,7 +34,7 @@ public class Entity : MonoBehaviour
     {
         spriteRenderer.flipX = dir != Vector3Int.right;
 
-        transform.Translate((pos - transform.position) * GameBoard.tickWaitTime * Time.deltaTime);
+        transform.Translate(((pos - transform.position).normalized * Time.deltaTime / waitTicks) / GameBoard.tickWaitTime);
     }
 
     private void OnDrawGizmos()
