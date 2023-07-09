@@ -21,6 +21,8 @@ public class GameBoard : MonoBehaviour
     private int tickCount = 0;
     private bool isSimulating = false;
     private float timeSinceTick = 0;
+
+    private bool adventurerHasKey;
     
     private List<Entity> entities;
     
@@ -37,6 +39,8 @@ public class GameBoard : MonoBehaviour
         AdventurerStart,
         OutOfBounds,
         Lava,
+        Door,
+        Key,  
     }
     
     void Start()
@@ -76,6 +80,15 @@ public class GameBoard : MonoBehaviour
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Lava;
             }
+            else if (tile.name == "Door")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Door;
+            }
+            else if (tile.name == "Key")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Key;
+                adventurerHasKey = false; // there's a key, the adventurer will need to get it
+            }
         }
         
         // remove this when start button works!!
@@ -97,6 +110,7 @@ public class GameBoard : MonoBehaviour
         
     }
 
+    // NOTE: If we don't want so many "IsX" funcs we could generalize to IsType(pos, Type)
     bool IsSolid(Vector3Int pos)
     {
         var tileType = GetTileType(pos);
@@ -117,9 +131,30 @@ public class GameBoard : MonoBehaviour
         {
             return true;
         }
-
-        return tileType == TileType.BuildSpace && buildTilemap.HasTile(pos);
+        return false;
     }
+
+    bool IsDoor(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Door)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool IsKey(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Key)
+        {
+            return true;
+        }
+        return false;
+    }
+
 
 
     void Update()
@@ -213,69 +248,116 @@ public class GameBoard : MonoBehaviour
         isSimulating = false;
     }
 
+    int GetFallDamage(int fallCount)
+    {
+        if (fallCount < 4) 
+        { 
+            return 0;
+        }
+        int damage = (fallCount - 2) / 2;
+        Debug.Log("Fall damage: " + damage);
+        return damage;
+    }
+
     void Simulate()
     {
         foreach (var e in entities)
         {
-            if (IsSolid(e.pos + Vector3Int.down)) // grounded
+            if (e.health <= 0)
             {
-                // e.waitTicks = e.max
-                if (IsSolid(e.pos + e.dir + Vector3Int.up)) // solid at face
+             Debug.Log(e.entityType + "is still dead!");
+            }
+            else if (IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            {
+                // TODO: will need to disappear the key tile
+                adventurerHasKey = true;
+            }
+            else if (IsSolid(e.pos + Vector3Int.down)) // grounded
+            {
+                Debug.Log("Health before fall: " + e.health);
+                // TODO: ONLY ADVENTURER
+                e.health = e.health - GetFallDamage(e.fallCount);
+                e.fallCount = 0;
+                Debug.Log("Health after fall: " + e.health);
+                if (e.health <= 0) // dead from being grounded
                 {
-                    // switch directions! 
-                    if (e.dir == Vector3Int.right)
-                    {
-                        e.pos += e.dir;
-                        e.waitTicksCount = 0;
-                        e.dir = Vector3Int.left;
-                    }
-                    else
-                    {
-                        e.dir = Vector3Int.right;
-                    }
+                    Debug.Log("Dead from fall!");
                 }
-                else // move forward is possible
+                
+                else // not dead from being grounded
                 {
-                    if (IsSolid(e.pos + e.dir)) // jump
+                    e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
+                    if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
                     {
-                        if (e.waitTicks == e.waitTicksCount)
-                        {
-                            e.pos += e.dir + Vector3Int.up;
-                            e.waitTicksCount = 0;
-                        }
-                        else
-                        {
-                            e.waitTicksCount++;
-                        }
-                    }
-                    else // forward
-                    {
-                        if (e.waitTicks == e.waitTicksCount)
+                        // switch directions! 
+                        if (e.dir == Vector3Int.right)
                         {
                             e.pos += e.dir;
                             e.waitTicksCount = 0;
+                            e.dir = Vector3Int.left;
                         }
                         else
                         {
-                            e.waitTicksCount++;
+                            e.dir = Vector3Int.right;
                         }
                     }
+                    else // move forward is possible
+                    {
+                        if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
+                        {
+                            if (e.waitTicks == e.waitTicksCount)
+                            {
+                                e.pos += e.dir + Vector3Int.up;
+                                e.waitTicksCount = 0;
+                            }
+                            else
+                            {
+                                e.waitTicksCount++;
+                            }
+                        }
+                        else // forward
+                        {
+                            if (e.waitTicks == e.waitTicksCount)
+                            {
+                                e.pos += e.dir;
+                                e.waitTicksCount = 0;
+                            }
+                            else
+                            {
+                                e.waitTicksCount++;
+                            }
+                        }
 
-                }   
+                    }
+
+                }         
             }
-            else if (IsLava(e.pos + Vector3Int.down)) // lava
+            else if (IsLava(e.pos + Vector3Int.down)) // lava 
             {
                 // instant death
                 e.health = 0;
             }
-            else // fall
+            else // fall 
             {
-                // increase speed
+                // TODO: ONLY ADVENTURER
+                e.waitTicks = 1; // speed up when falling
+                e.fallCount++;
                 e.pos += Vector3Int.down;
-                // 
             }
-            if (e.health == 0) {
+
+            if (e.health <= 0) {
                 Debug.Log("Dead!");
+            }
+            else (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+            {
+                if (adventurerHasKey)
+                {
+                    Debug.Log("You won, dude.");
+                }
+                else
+                {
+                    Debug.Log("Don't have key yet!");
+                }
             }
 
         }
