@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 
 public class GameBoard : MonoBehaviour
 {
+    public static float tickWaitTime = 0.1f;
 
     public Tile buildTile;
     public Tilemap gameTilemap;
@@ -19,8 +20,9 @@ public class GameBoard : MonoBehaviour
     private Camera cam;
     private int tickCount = 0;
     private bool isSimulating = false;
-    private float tickWaitTime = 0.5f;
     private float timeSinceTick = 0;
+
+    private bool adventurerHasKey = true;
     
     private List<Entity> entities;
     
@@ -36,6 +38,9 @@ public class GameBoard : MonoBehaviour
         StartButton,
         AdventurerStart,
         OutOfBounds,
+        Lava,
+        Door,
+        Key,  
     }
     
     void Start()
@@ -43,6 +48,8 @@ public class GameBoard : MonoBehaviour
         grid = GetComponent<Grid>();
         cam = Camera.main;
         tileTypes = new TileType[gameTilemap.cellBounds.size.x, gameTilemap.cellBounds.size.y];
+
+        var time = Time.time;
 
         foreach (var pos in gameTilemap.cellBounds.allPositionsWithin)
         {
@@ -71,13 +78,28 @@ public class GameBoard : MonoBehaviour
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.StartButton;
             }
+            else if (tile.name == "Lava")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Lava;
+            }
+            else if (tile.name == "Door")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Door;
+            }
+            else if (tile.name == "Key")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.Key;
+                adventurerHasKey = false; // there's a key, the adventurer will need to get it
+            }
         }
+
+        Debug.Log(Time.time - time);
+        time = Time.time;
         
         // remove this when start button works!!
         
         InitEntities();
-        
-        StartSimulation();
+        Debug.Log(Time.time - time);
     }
 
     TileType GetTileType(Vector3Int pos)
@@ -92,6 +114,7 @@ public class GameBoard : MonoBehaviour
         
     }
 
+    // NOTE: If we don't want so many "IsX" funcs we could generalize to IsType(pos, Type)
     bool IsSolid(Vector3Int pos)
     {
         var tileType = GetTileType(pos);
@@ -104,17 +127,45 @@ public class GameBoard : MonoBehaviour
         return tileType == TileType.BuildSpace && buildTilemap.HasTile(pos);
     }
 
+    bool IsLava(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Lava)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool IsDoor(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Door)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool IsKey(Vector3Int pos)
+    {
+        var tileType = GetTileType(pos);
+
+        if (tileType == TileType.Key)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
 
     void Update()
     {
         var mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
         var pos = grid.WorldToCell(mousePos);
         var tileType = GetTileType(pos);
-
-        if (tileType == TileType.OutOfBounds)
-        {
-            return;
-        }
 
         if (Input.GetMouseButtonDown(LEFT_CLICK))
         {
@@ -137,8 +188,13 @@ public class GameBoard : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("STARTED");
+            StartSimulation();
+        }
+
         timeSinceTick += Time.deltaTime;
-        
         if (isSimulating && tickWaitTime < timeSinceTick)
         {
             timeSinceTick -= tickWaitTime;
@@ -159,8 +215,12 @@ public class GameBoard : MonoBehaviour
                 var entity = go.GetComponent<Entity>();
                 entity.pos = pos;
                 entity.dir = Vector3Int.right;
+                // TODO: change this later. Not everything has health of 3.
+                entity.health = 3;
                 entities.Add(entity);
             }
+            // TODO: maybe check which entity type here and just hard-code attributes like health/maxTicks
+            // e.g if entityType == ""Adventurer"
         }
 
         // return null;
@@ -193,41 +253,118 @@ public class GameBoard : MonoBehaviour
         isSimulating = false;
     }
 
+    int GetFallDamage(int fallCount)
+    {
+        if (fallCount < 4) 
+        { 
+            return 0;
+        }
+        int damage = (fallCount - 2) / 2;
+        Debug.Log("Fall damage: " + damage);
+        return damage;
+    }
+
     void Simulate()
     {
         foreach (var e in entities)
         {
-            if (IsSolid(e.pos + Vector3Int.down))
+            if (e.health <= 0)
             {
-                // move
-                if (!IsSolid(e.pos + e.dir) && !IsSolid(e.pos + e.dir + Vector3Int.up))
+             Debug.Log(e.entityType + "is still dead!");
+            }
+            else if (IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            {
+                // TODO: will need to disappear the key tile
+                adventurerHasKey = true;
+            }
+            if (IsSolid(e.pos + Vector3Int.down)) // grounded
+            {
+                Debug.Log("Health before fall: " + e.health);
+                // TODO: ONLY ADVENTURER
+                e.health = e.health - GetFallDamage(e.fallCount);
+                e.fallCount = 0;
+                Debug.Log("Health after fall: " + e.health);
+                if (e.health <= 0) // dead from being grounded
                 {
-                    if (e.waitTicks == e.waitTicksCount)
+                    Debug.Log("Dead from fall!");
+                }
+                
+                else // not dead from being grounded
+                {
+                    e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
+                    if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
                     {
-                        e.pos += e.dir * e.speed;
-                        e.waitTicksCount = 0;
+                        // switch directions! 
+                        if (e.dir == Vector3Int.right)
+                        {
+                            e.pos += e.dir;
+                            e.waitTicksCount = 0;
+                            e.dir = Vector3Int.left;
+                        }
+                        else
+                        {
+                            e.dir = Vector3Int.right;
+                        }
                     }
-                    else
+                    else // move forward is possible
                     {
-                        e.waitTicksCount++;
+                        if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
+                        {
+                            if (e.waitTicks == e.waitTicksCount)
+                            {
+                                e.pos += e.dir + Vector3Int.up;
+                                e.waitTicksCount = 0;
+                            }
+                            else
+                            {
+                                e.waitTicksCount++;
+                            }
+                        }
+                        else // forward
+                        {
+                            if (e.waitTicks == e.waitTicksCount)
+                            {
+                                e.pos += e.dir;
+                                e.waitTicksCount = 0;
+                            }
+                            else
+                            {
+                                e.waitTicksCount++;
+                            }
+                        }
+
                     }
+
+                }         
+            }
+            else if (IsLava(e.pos + Vector3Int.down)) // lava 
+            {
+                // instant death
+                e.health = 0;
+            }
+            else // fall 
+            {
+                // TODO: ONLY ADVENTURER
+                e.waitTicks = 1; // speed up when falling
+                e.fallCount++;
+                e.pos += Vector3Int.down;
+            }
+
+            if (e.health <= 0) {
+                Debug.Log("Dead!");
+            }
+            else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+            {
+                if (adventurerHasKey)
+                {
+                    Debug.Log("You won, dude.");
                 }
                 else
                 {
-                    if (e.dir == Vector3Int.right)
-                    {
-                        e.dir = Vector3Int.left;
-                    }
-                    else
-                    {
-                        e.dir = Vector3Int.right;
-                    }
+                    Debug.Log("Don't have key yet!");
                 }
             }
-            else // fall
-            {
-                e.pos += Vector3Int.down;
-            }
+
         }
         
     }

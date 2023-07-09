@@ -118,27 +118,7 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
-  animatedSpriteImportData:
-  - name: Adventurer
-    originalName: 
-    pivot: {x: 0.49999997, y: 0}
-    alignment: 9
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 4
-      width: 8
-      height: 16
-    spriteID: 1f80863516f5340a0ac5fd3c423a193b
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 4, y: 4}
+  animatedSpriteImportData: []
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
@@ -147,15 +127,7 @@ ScriptedImporter:
     layerFlags: 0
     layerType: 0
     blendMode: 0
-    cells:
-    - name: Adventurer
-      frameIndex: 0
-      cellRect:
-        x: 8
-        y: 0
-        width: 8
-        height: 16
-      spriteId: 1f80863516f5340a0ac5fd3c423a193b
+    cells: []
     linkedCells: []
     parentIndex: -1
   platformSettings:
