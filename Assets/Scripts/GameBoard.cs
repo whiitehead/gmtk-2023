@@ -277,7 +277,7 @@ public class GameBoard : MonoBehaviour
                 // TODO: will need to disappear the key tile
                 adventurerHasKey = true;
             }
-            else if (IsSolid(e.pos + Vector3Int.down)) // grounded
+            if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
                 Debug.Log("Health before fall: " + e.health);
                 // TODO: ONLY ADVENTURER
