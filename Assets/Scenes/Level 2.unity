@@ -2129,8 +2129,8 @@ Tilemap:
   - first: {x: -16, y: -5, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 27
-      m_TileSpriteIndex: 27
+      m_TileIndex: 32
+      m_TileSpriteIndex: 31
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -7562,7 +7562,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: b96a9f1ac774d4f06ab51d21dc2c1654, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 40b63eee4ff054c4284c1c3e45b91742, type: 2}
-  - m_RefCount: 465
+  - m_RefCount: 464
     m_Data: {fileID: 11400000, guid: 0a5d1889bcbc741509d57079d097e369, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 2081ef9a523e44885afc3b399cd96080, type: 2}
@@ -7572,8 +7572,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: e6559f908ee994458bf69b64ff20a5c0, type: 2}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 6bc14f05b9c3e47479181ec168307845, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: bfa71a9f576973f4e87e6c27dcb78ffd, type: 2}
   - m_RefCount: 5
@@ -7637,7 +7637,7 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 465
+  - m_RefCount: 464
     m_Data: {fileID: -1791755381, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 1259681122, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
@@ -7645,8 +7645,8 @@ Tilemap:
     m_Data: {fileID: 335637416, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 1660658372, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: e46fc22a386b1485db2c7c12abdaa9f4, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -593176901, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
   - m_RefCount: 1
@@ -10763,7 +10763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd357bd15cab4313a98353edbd29c9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildTile: {fileID: 11400000, guid: 63de924b419d34569811191d5e22cec6, type: 2}
+  buildTile: {fileID: 11400000, guid: 3c3b8a094126f4aaabe98ff52b83c687, type: 2}
   gameTilemap: {fileID: 858193283}
   buildTilemap: {fileID: 1855351134}
   entityPrefabs:

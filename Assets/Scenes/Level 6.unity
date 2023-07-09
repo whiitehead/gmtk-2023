@@ -5685,8 +5685,8 @@ Tilemap:
   - first: {x: 9, y: 4, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 24
-      m_TileSpriteIndex: 24
+      m_TileIndex: 25
+      m_TileSpriteIndex: 25
       m_TileMatrixIndex: 1
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -7622,8 +7622,10 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 0a46dff59148c7e4ea448bf7015c5693, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: bfa71a9f576973f4e87e6c27dcb78ffd, type: 2}
-  - m_RefCount: 263
+  - m_RefCount: 262
     m_Data: {fileID: 11400000, guid: 0a5d1889bcbc741509d57079d097e369, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 6bc14f05b9c3e47479181ec168307845, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: 2178948331369818922, guid: 50e6c8da4b61947418a18726359f69eb, type: 3}
@@ -7673,8 +7675,10 @@ Tilemap:
     m_Data: {fileID: 343344715, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
   - m_RefCount: 5
     m_Data: {fileID: -65150727, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
-  - m_RefCount: 263
+  - m_RefCount: 262
     m_Data: {fileID: -1791755381, guid: c4c7332f104914a6fa31a1978410d3a1, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: e46fc22a386b1485db2c7c12abdaa9f4, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 2
     m_Data:
@@ -13263,7 +13267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd357bd15cab4313a98353edbd29c9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildTile: {fileID: 11400000, guid: 63de924b419d34569811191d5e22cec6, type: 2}
+  buildTile: {fileID: 11400000, guid: 3c3b8a094126f4aaabe98ff52b83c687, type: 2}
   gameTilemap: {fileID: 858193283}
   buildTilemap: {fileID: 1855351134}
   entityPrefabs:
