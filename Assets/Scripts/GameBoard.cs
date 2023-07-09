@@ -167,7 +167,7 @@ public class GameBoard : MonoBehaviour
         var pos = grid.WorldToCell(mousePos);
         var tileType = GetTileType(pos);
 
-        if (Input.GetMouseButtonDown(LEFT_CLICK))
+        if (Input.GetMouseButton(LEFT_CLICK))
         {
             if (tileType == TileType.BuildSpace)
             {
@@ -177,7 +177,7 @@ public class GameBoard : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonDown(RIGHT_CLICK))
+        else if (Input.GetMouseButton(RIGHT_CLICK))
         {
             if (tileType == TileType.BuildSpace)
             {
