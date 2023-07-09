@@ -69,6 +69,8 @@ public class Entity : MonoBehaviour
 
         var target = new Vector3(pos.x + 0.5f, pos.y, 0);
         transform.Translate(((target - transform.position).normalized * Time.deltaTime / waitTicks) / GameBoard.tickWaitTime);
+        
+        
     }
 
     private void OnDrawGizmos()
