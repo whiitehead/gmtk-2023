@@ -166,6 +166,19 @@ public class GameBoard : MonoBehaviour
         return false;
     }
 
+    bool IsNonFightingEntity(Vector3Int pos)
+    {
+        foreach (var e in entities)
+        {
+            if (pos == e.pos && e.health > 0)
+            {
+                Debug.Log("Ran into another entity... but didn't fight.");
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
     void Update()
@@ -277,14 +290,56 @@ public class GameBoard : MonoBehaviour
         {
             if (e.health <= 0)
             {
-             Debug.Log(e.entityType + "is still dead!");
+                Debug.Log(e.entityType + " is still dead!");
             }
+            else if (e.isFighting)
+            {
+                Debug.Log("Combat");
+                e.fighting.health = e.fighting.health - 1;
+                if (e.fighting.health <= 0)
+                {
+                    e.isFighting = false;
+                    Debug.Log(e.fighting.entityType + "killed in combat dead!");
+                }
+            }
+            // take keys
             if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
             {
                 // TODO: will need to disappear the key tile one they hit it
                 adventurerHasKey = true;
             }
-            
+            // Initiate combat
+            if (e.entityType == Entity.EntityType.Adventurer)
+            {
+                foreach (var scenePartner in entities)
+                {
+                    if (scenePartner.entityType == Entity.EntityType.Goblin)
+                    {
+                        if ((scenePartner.pos == (e.pos + e.dir)) && (scenePartner.health > 0))
+                        {
+                            Debug.Log("Fight initiated");
+                            e.isFighting = true;
+                            e.fighting = scenePartner;
+                            
+                            scenePartner.isFighting = true;
+                            scenePartner.fighting = e;
+
+                            if (scenePartner.dir == scenePartner.dir)
+                            { // make enemies face their death
+                                if (scenePartner.dir == Vector3Int.right)
+                                {
+                                    scenePartner.dir = Vector3Int.left;
+                                }
+                                else
+                                {
+                                    scenePartner.dir = Vector3Int.right;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // sorry for this condition caleb
             if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
                 if (e.entityType == Entity.EntityType.Adventurer) 
@@ -303,6 +358,12 @@ public class GameBoard : MonoBehaviour
                     if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
                     {
                         // switch directions! 
+                        SwitchDirection(e);
+                    }
+                    // NOTE: this is only to stop multiple enemies from attacking/fighting at once. Enemies can't walk through 
+                    // entities (adventurer and other enemies) that they aren't fighting.
+                    else if (e.entityType == Entity.EntityType.Goblin && IsNonFightingEntity(e.pos + e.dir))
+                    {
                         SwitchDirection(e);
                     }
                     else // move forward is possible
