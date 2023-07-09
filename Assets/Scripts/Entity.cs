@@ -12,36 +12,63 @@ public class Entity : MonoBehaviour
     }
 
     public EntityType entityType;
-
-    public Vector3Int pos;
-    public Vector3Int dir;
-    [HideInInspector]
-    public int maxWaitTicks;
     public int waitTicks = 3;
-    public int waitTicksCount = 0;
-    public int fallCount = 0;
-
-    public bool isFighting = false;
-    public Entity fighting = null;
-
-    public int health;
     public int maxHealth;
+    public int health;
+    public GameObject emptyHeart;
+    public GameObject fullHeart;
 
-
-
+    [HideInInspector] public Vector3Int pos;
+    [HideInInspector] public Vector3Int dir;
+    [HideInInspector] public int maxWaitTicks;
+    [HideInInspector] public int waitTicksCount = 0;
+    [HideInInspector] public int fallCount = 0;
+    [HideInInspector] public bool isFighting = false;
+    [HideInInspector] public Entity fighting = null;
+    
     private SpriteRenderer spriteRenderer;
+    private List<GameObject> heartList;
+    private int listHealth;
 
     private void Start()
     {
         maxWaitTicks = waitTicks;
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        heartList = new List<GameObject>();
     }
 
     private void Update()
     {
+        if (listHealth != health || maxHealth != heartList.Count)
+        {
+            listHealth = health;
+            
+            foreach (var go in heartList)
+            {
+                Destroy(go);
+            }
+            
+            heartList.Clear();
+
+            for (int i = 0; i < maxHealth; i++)
+            {
+                var heartPos = new Vector3(((float)(i) / maxHealth) * maxHealth / 2 - (float)maxHealth / 4, 2f, 0) + transform.position;
+                if (health <= i)
+                {
+                    heartList.Add(Instantiate(emptyHeart, heartPos, Quaternion.identity,transform));
+                }
+                else
+                {
+                    heartList.Add(Instantiate(fullHeart, heartPos, Quaternion.identity,transform));
+                }
+            }    
+        }
+        
         spriteRenderer.flipX = dir != Vector3Int.right;
 
-        transform.Translate(((pos - transform.position).normalized * Time.deltaTime / waitTicks) / GameBoard.tickWaitTime);
+        var target = new Vector3(pos.x + 0.5f, pos.y, 0);
+        transform.Translate(((target - transform.position).normalized * Time.deltaTime / waitTicks) / GameBoard.tickWaitTime);
     }
 
     private void OnDrawGizmos()

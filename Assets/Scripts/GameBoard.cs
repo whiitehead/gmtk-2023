@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 
@@ -19,7 +20,7 @@ public class GameBoard : MonoBehaviour
     private TileType[,] tileTypes;
     private Camera cam;
     private int tickCount = 0;
-    private bool isSimulating = false;
+    [HideInInspector] public bool isSimulating = false;
     private float timeSinceTick = 0;
 
     private bool adventurerHasKey = true;
@@ -48,6 +49,10 @@ public class GameBoard : MonoBehaviour
     
     void Start()
     {
+
+
+
+
         grid = GetComponent<Grid>();
         cam = Camera.main;
         tileTypes = new TileType[gameTilemap.cellBounds.size.x, gameTilemap.cellBounds.size.y];
@@ -187,31 +192,29 @@ public class GameBoard : MonoBehaviour
         var pos = grid.WorldToCell(mousePos);
         var tileType = GetTileType(pos);
 
-        if (Input.GetMouseButton(LEFT_CLICK))
+        if (!isSimulating)
         {
-            if (tileType == TileType.BuildSpace)
+            if (Input.GetMouseButton(LEFT_CLICK))
             {
-                if (!buildTilemap.HasTile(pos))
+                if (tileType == TileType.BuildSpace)
                 {
-                    buildTilemap.SetTile(pos, buildTile);
+                    if (!buildTilemap.HasTile(pos))
+                    {
+                        Debug.Log("BUILD!!!");
+                        buildTilemap.SetTile(pos, buildTile);
+                    }
                 }
             }
-        }
-        else if (Input.GetMouseButton(RIGHT_CLICK))
-        {
-            if (tileType == TileType.BuildSpace)
+            else if (Input.GetMouseButton(RIGHT_CLICK))
             {
-                if (buildTilemap.HasTile(pos))
+                if (tileType == TileType.BuildSpace)
                 {
-                    buildTilemap.SetTile(pos, null);
+                    if (buildTilemap.HasTile(pos))
+                    {
+                        buildTilemap.SetTile(pos, null);
+                    }
                 }
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("STARTED");
-            StartSimulation();
         }
 
         timeSinceTick += Time.deltaTime;
@@ -244,7 +247,19 @@ public class GameBoard : MonoBehaviour
 
     void InitEntities()
     {
-        entities = new List<Entity>();
+        if (entities == null)
+        {
+            entities = new List<Entity>();
+        }
+        else
+        {
+            foreach (var entity in entities)
+            {
+                Destroy(entity.gameObject);
+            }
+            
+            entities.Clear();
+        }
         
         for (int x = 0; x < tileTypes.GetLength(0); x++)
         {
@@ -262,15 +277,17 @@ public class GameBoard : MonoBehaviour
         }
     }
 
-    void StartSimulation()
+    public void StartSimulation()
     {
         isSimulating = true;
         timeSinceTick = 0;
     }
 
-    void EndSimulation()
+    public void EndSimulation()
     {
+        // there is a bug where you can get the key, stop the sim and then still have the key. Too close until the end of the jam to fix it.
         isSimulating = false;
+        InitEntities();
     }
 
     int GetFallDamage(int fallCount)
@@ -294,13 +311,19 @@ public class GameBoard : MonoBehaviour
             }
             else if (e.isFighting)
             {
+                e.GetComponent<Animator>().SetTrigger("Attack");
                 Debug.Log("Combat");
                 e.fighting.health = e.fighting.health - 1;
                 if (e.fighting.health <= 0)
                 {
                     e.isFighting = false;
                     Debug.Log(e.fighting.entityType + "killed in combat dead!");
+                    e.health = e.maxHealth;
                 }
+            }
+            else
+            {
+                e.GetComponent<Animator>().SetTrigger("Walk");
             }
             // take keys
             if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
@@ -324,7 +347,7 @@ public class GameBoard : MonoBehaviour
                             scenePartner.isFighting = true;
                             scenePartner.fighting = e;
 
-                            if (scenePartner.dir == scenePartner.dir)
+                            if (scenePartner.dir == e.dir)
                             { // make enemies face their death
                                 if (scenePartner.dir == Vector3Int.right)
                                 {
@@ -417,6 +440,9 @@ public class GameBoard : MonoBehaviour
                     if (adventurerHasKey)
                     {
                         Debug.Log("You won, dude.");
+                        isSimulating = false;
+                        var nextscene = Int32.Parse(SceneManager.GetActiveScene().name.Substring(6)) + 1;
+                        SceneManager.LoadScene($"Level {nextscene}");
                     }
                     else
                     {
