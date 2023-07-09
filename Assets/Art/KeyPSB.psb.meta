@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7d99205d3a8cb574fa8075ddd1a20a97
+guid: d6ec2e0bb88cb1242ae71a6618f6bf67
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,28 +94,7 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
-  - name: Walk 2
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 29
-      y: 4
-      width: 10
-      height: 16
-    spriteID: f68ba3b0cae331f429cc228a1f6f2bc8
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 22, y: 4}
-    spritePosition: {x: 7, y: 0}
-  - name: Walk 1
+  - name: Layer 2
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -123,10 +102,10 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 97
+      y: 4
       width: 11
       height: 15
-    spriteID: f0e6c29a3400afc4ab308601827b7b4a
+    spriteID: 5cf4c486fcf464c47b73a8d51ffe1127
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -134,51 +113,9 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: -2, y: 97}
-    spritePosition: {x: 6, y: 0}
-  - name: Block
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 4
-      width: 17
-      height: 15
-    spriteID: 0bec5e6907ab6844792b9e1478ae225d
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 4}
-    spritePosition: {x: 6, y: 0}
-  - name: Hold Up
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 73
-      width: 13
-      height: 16
-    spriteID: 101d681b45c3be6498c8879198881863
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 73}
-    spritePosition: {x: 6, y: 0}
-  - name: Swing
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 7, y: 1}
+  - name: Layer 2
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -187,9 +124,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 27
-      width: 17
-      height: 15
-    spriteID: c4f891c1f40b694449889217f41ffc87
+      width: 8
+      height: 13
+    spriteID: 4cc5f78980492a847bbdc4cfa2ed63ae
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -197,29 +134,8 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: -2, y: 27}
-    spritePosition: {x: 6, y: 0}
-  - name: Hit
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 50
-      width: 17
-      height: 15
-    spriteID: 3616dc2b61be2494ea8987ab4b3658f3
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -3, y: 50}
-    spritePosition: {x: 7, y: 0}
+    uvTransform: {x: 4, y: 27}
+    spritePosition: {x: 7, y: 2}
   characterData:
     bones: []
     parts: []
@@ -290,63 +206,23 @@ ScriptedImporter:
   resliceFromLayer: 0
   mosaicPSDLayers: []
   rigPSDLayers:
-  - name: Walk 2
-    spriteName: Walk 2
+  - name: Layer 2
+    spriteName: Layer 2
     isGroup: 0
     parentIndex: -1
-    spriteID: f68ba3b0cae331f429cc228a1f6f2bc8
-    layerID: 7
-    mosaicPosition: {x: 29, y: 4}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Walk 1
-    spriteName: Walk 1
-    isGroup: 0
-    parentIndex: -1
-    spriteID: f0e6c29a3400afc4ab308601827b7b4a
-    layerID: 6
-    mosaicPosition: {x: 4, y: 97}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Block
-    spriteName: Block
-    isGroup: 0
-    parentIndex: -1
-    spriteID: 0bec5e6907ab6844792b9e1478ae225d
-    layerID: 5
+    spriteID: 5cf4c486fcf464c47b73a8d51ffe1127
+    layerID: 3
     mosaicPosition: {x: 4, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
-  - name: Hold Up
-    spriteName: Hold Up
+  - name: Layer 2
+    spriteName: Layer 2
     isGroup: 0
     parentIndex: -1
-    spriteID: 101d681b45c3be6498c8879198881863
-    layerID: 4
-    mosaicPosition: {x: 4, y: 73}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Swing
-    spriteName: Swing
-    isGroup: 0
-    parentIndex: -1
-    spriteID: c4f891c1f40b694449889217f41ffc87
-    layerID: 3
-    mosaicPosition: {x: 4, y: 27}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Hit
-    spriteName: Hit
-    isGroup: 0
-    parentIndex: -1
-    spriteID: 3616dc2b61be2494ea8987ab4b3658f3
+    spriteID: 4cc5f78980492a847bbdc4cfa2ed63ae
     layerID: 2
-    mosaicPosition: {x: 4, y: 50}
+    mosaicPosition: {x: 4, y: 27}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -354,7 +230,7 @@ ScriptedImporter:
     spriteName: 
     isGroup: 0
     parentIndex: -1
-    spriteID: e89683cae2f7b5047b7c037f9b163725
+    spriteID: 54b2e6289d754454cbcdefb0288885d8
     layerID: 1
     mosaicPosition: {x: 0, y: 0}
     flatten: 0

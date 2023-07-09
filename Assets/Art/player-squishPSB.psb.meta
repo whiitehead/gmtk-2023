@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7d99205d3a8cb574fa8075ddd1a20a97
+guid: 1d6f91512b4ba044f9f56b19ebe90565
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,18 +94,60 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
-  - name: Walk 2
+  - name: Fall
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 29
+      x: 4
       y: 4
+      width: 8
+      height: 10
+    spriteID: 832bbc804289cb44a9090d1be9aa2115
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 8, y: 0}
+  - name: Land
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 22
+      width: 9
+      height: 6
+    spriteID: fa9fae3f939f9ba49a771d3b933e7036
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 22}
+    spritePosition: {x: 8, y: 0}
+  - name: Squish '
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 36
       width: 10
-      height: 16
-    spriteID: f68ba3b0cae331f429cc228a1f6f2bc8
+      height: 3
+    spriteID: e7d9f08cb6680604e88e4fd862bbf20c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -113,112 +155,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 22, y: 4}
-    spritePosition: {x: 7, y: 0}
-  - name: Walk 1
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 97
-      width: 11
-      height: 15
-    spriteID: f0e6c29a3400afc4ab308601827b7b4a
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 97}
-    spritePosition: {x: 6, y: 0}
-  - name: Block
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 4
-      width: 17
-      height: 15
-    spriteID: 0bec5e6907ab6844792b9e1478ae225d
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 4}
-    spritePosition: {x: 6, y: 0}
-  - name: Hold Up
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 73
-      width: 13
-      height: 16
-    spriteID: 101d681b45c3be6498c8879198881863
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 73}
-    spritePosition: {x: 6, y: 0}
-  - name: Swing
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 27
-      width: 17
-      height: 15
-    spriteID: c4f891c1f40b694449889217f41ffc87
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -2, y: 27}
-    spritePosition: {x: 6, y: 0}
-  - name: Hit
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 50
-      width: 17
-      height: 15
-    spriteID: 3616dc2b61be2494ea8987ab4b3658f3
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: -3, y: 50}
+    uvTransform: {x: 4, y: 36}
     spritePosition: {x: 7, y: 0}
   characterData:
     bones: []
@@ -290,63 +227,33 @@ ScriptedImporter:
   resliceFromLayer: 0
   mosaicPSDLayers: []
   rigPSDLayers:
-  - name: Walk 2
-    spriteName: Walk 2
+  - name: Fall
+    spriteName: Fall
     isGroup: 0
     parentIndex: -1
-    spriteID: f68ba3b0cae331f429cc228a1f6f2bc8
-    layerID: 7
-    mosaicPosition: {x: 29, y: 4}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Walk 1
-    spriteName: Walk 1
-    isGroup: 0
-    parentIndex: -1
-    spriteID: f0e6c29a3400afc4ab308601827b7b4a
-    layerID: 6
-    mosaicPosition: {x: 4, y: 97}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Block
-    spriteName: Block
-    isGroup: 0
-    parentIndex: -1
-    spriteID: 0bec5e6907ab6844792b9e1478ae225d
-    layerID: 5
+    spriteID: 832bbc804289cb44a9090d1be9aa2115
+    layerID: 4
     mosaicPosition: {x: 4, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
-  - name: Hold Up
-    spriteName: Hold Up
+  - name: Land
+    spriteName: Land
     isGroup: 0
     parentIndex: -1
-    spriteID: 101d681b45c3be6498c8879198881863
-    layerID: 4
-    mosaicPosition: {x: 4, y: 73}
-    flatten: 0
-    isImported: 1
-    isVisible: 1
-  - name: Swing
-    spriteName: Swing
-    isGroup: 0
-    parentIndex: -1
-    spriteID: c4f891c1f40b694449889217f41ffc87
+    spriteID: fa9fae3f939f9ba49a771d3b933e7036
     layerID: 3
-    mosaicPosition: {x: 4, y: 27}
+    mosaicPosition: {x: 4, y: 22}
     flatten: 0
     isImported: 1
     isVisible: 1
-  - name: Hit
-    spriteName: Hit
+  - name: Squish '
+    spriteName: Squish '
     isGroup: 0
     parentIndex: -1
-    spriteID: 3616dc2b61be2494ea8987ab4b3658f3
+    spriteID: e7d9f08cb6680604e88e4fd862bbf20c
     layerID: 2
-    mosaicPosition: {x: 4, y: 50}
+    mosaicPosition: {x: 4, y: 36}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -354,7 +261,7 @@ ScriptedImporter:
     spriteName: 
     isGroup: 0
     parentIndex: -1
-    spriteID: e89683cae2f7b5047b7c037f9b163725
+    spriteID: e8a20e5c7078abe48997a721c06816a9
     layerID: 1
     mosaicPosition: {x: 0, y: 0}
     flatten: 0
