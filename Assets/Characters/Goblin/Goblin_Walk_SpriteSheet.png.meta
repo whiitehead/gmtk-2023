@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f1c291947451d4b15bf02142022f82bd
+guid: 8bcf142eac0af447bba7fcb17eb04d13
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Knight_Walk_SpriteSheet_0
+      name: Goblin_Walk_SpriteSheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: db84ef8d5149d43a1ba13c10d724e395
-      internalID: 1015557300
+      spriteID: 7b2a598a9498446bdb4506db24201de1
+      internalID: 436923193
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_Walk_SpriteSheet_1
+      name: Goblin_Walk_SpriteSheet_1
       rect:
         serializedVersion: 2
         x: 0
@@ -145,14 +145,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1892eba711b644a8795b8bcfa138fd99
-      internalID: -836849115
+      spriteID: 008faed9f86ef47ab9af54d3963848d1
+      internalID: -1379668463
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_Walk_SpriteSheet_2
+      name: Goblin_Walk_SpriteSheet_2
       rect:
         serializedVersion: 2
         x: 0
@@ -166,14 +166,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d2209770abf754579bc896c52fa2a3e4
-      internalID: 658087396
+      spriteID: 60a491d61907f4eb9ad042593eb96211
+      internalID: 1437668817
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Knight_Walk_SpriteSheet_3
+      name: Goblin_Walk_SpriteSheet_3
       rect:
         serializedVersion: 2
         x: 0
@@ -187,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6e8451e01e2674f31a6a14462bf7fb18
-      internalID: -635695864
+      spriteID: 8105525a426324343ba314044c739f41
+      internalID: 1488852503
       vertices: []
       indices: 
       edges: []
@@ -204,10 +204,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Knight_Walk_SpriteSheet_0: 1015557300
-      Knight_Walk_SpriteSheet_1: -836849115
-      Knight_Walk_SpriteSheet_2: 658087396
-      Knight_Walk_SpriteSheet_3: -635695864
+      Goblin_Walk_SpriteSheet_0: 436923193
+      Goblin_Walk_SpriteSheet_1: -1379668463
+      Goblin_Walk_SpriteSheet_2: 1437668817
+      Goblin_Walk_SpriteSheet_3: 1488852503
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
