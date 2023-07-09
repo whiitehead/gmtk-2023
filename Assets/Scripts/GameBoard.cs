@@ -37,6 +37,9 @@ public class GameBoard : MonoBehaviour
         NoBuildSpace,
         StartButton,
         AdventurerStart,
+
+        EnemyStart,
+
         OutOfBounds,
         Lava,
         Door,
@@ -73,6 +76,10 @@ public class GameBoard : MonoBehaviour
             else if (tile.name == "AdventurerStart")
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.AdventurerStart;
+            }
+            else if (tile.name == "EnemyStart")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.EnemyStart;
             }
             else if (tile.name == "StartButton")
             {
@@ -159,6 +166,19 @@ public class GameBoard : MonoBehaviour
         return false;
     }
 
+    bool IsNonFightingEntity(Vector3Int pos)
+    {
+        foreach (var e in entities)
+        {
+            if (pos == e.pos && e.health > 0)
+            {
+                Debug.Log("Ran into another entity... but didn't fight.");
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
     void Update()
@@ -215,12 +235,8 @@ public class GameBoard : MonoBehaviour
                 var entity = go.GetComponent<Entity>();
                 entity.pos = pos;
                 entity.dir = Vector3Int.right;
-                // TODO: change this later. Not everything has health of 3.
-                entity.health = 3;
                 entities.Add(entity);
             }
-            // TODO: maybe check which entity type here and just hard-code attributes like health/maxTicks
-            // e.g if entityType == ""Adventurer"
         }
 
         // return null;
@@ -237,6 +253,10 @@ public class GameBoard : MonoBehaviour
                 if (tileTypes[x, y] == TileType.AdventurerStart)
                 {
                     InstantiateEntity(Entity.EntityType.Adventurer, new Vector3Int(x, y) + gameTilemap.cellBounds.position);
+                }
+                if (tileTypes[x, y] == TileType.EnemyStart)
+                {
+                    InstantiateEntity(Entity.EntityType.Goblin, new Vector3Int(x, y) + gameTilemap.cellBounds.position);
                 }
             }
         }
@@ -270,67 +290,98 @@ public class GameBoard : MonoBehaviour
         {
             if (e.health <= 0)
             {
-             Debug.Log(e.entityType + "is still dead!");
+                Debug.Log(e.entityType + " is still dead!");
             }
-            else if (IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            else if (e.isFighting)
             {
-                // TODO: will need to disappear the key tile
+                Debug.Log("Combat");
+                e.fighting.health = e.fighting.health - 1;
+                if (e.fighting.health <= 0)
+                {
+                    e.isFighting = false;
+                    Debug.Log(e.fighting.entityType + "killed in combat dead!");
+                }
+            }
+            // take keys
+            if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            {
+                // TODO: will need to disappear the key tile one they hit it
                 adventurerHasKey = true;
             }
+            // Initiate combat
+            if (e.entityType == Entity.EntityType.Adventurer)
+            {
+                foreach (var scenePartner in entities)
+                {
+                    if (scenePartner.entityType == Entity.EntityType.Goblin)
+                    {
+                        if ((scenePartner.pos == (e.pos + e.dir)) && (scenePartner.health > 0))
+                        {
+                            Debug.Log("Fight initiated");
+                            e.isFighting = true;
+                            e.fighting = scenePartner;
+                            
+                            scenePartner.isFighting = true;
+                            scenePartner.fighting = e;
+
+                            if (scenePartner.dir == scenePartner.dir)
+                            { // make enemies face their death
+                                if (scenePartner.dir == Vector3Int.right)
+                                {
+                                    scenePartner.dir = Vector3Int.left;
+                                }
+                                else
+                                {
+                                    scenePartner.dir = Vector3Int.right;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // sorry for this condition caleb
             if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
-                Debug.Log("Health before fall: " + e.health);
-                // TODO: ONLY ADVENTURER
-                e.health = e.health - GetFallDamage(e.fallCount);
-                e.fallCount = 0;
-                Debug.Log("Health after fall: " + e.health);
-                if (e.health <= 0) // dead from being grounded
+                if (e.entityType == Entity.EntityType.Adventurer) 
                 {
-                    Debug.Log("Dead from fall!");
+                    e.health = e.health - GetFallDamage(e.fallCount);
+                    e.fallCount = 0;
+                    if (e.health <= 0) // dead from being grounded
+                    {
+                        Debug.Log("Dead from fall!");
+                    }
                 }
                 
-                else // not dead from being grounded
+                if (e.health > 0) // not dead from being grounded
                 {
                     e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
                     if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
                     {
                         // switch directions! 
-                        if (e.dir == Vector3Int.right)
-                        {
-                            e.pos += e.dir;
-                            e.waitTicksCount = 0;
-                            e.dir = Vector3Int.left;
-                        }
-                        else
-                        {
-                            e.dir = Vector3Int.right;
-                        }
+                        SwitchDirection(e);
+                    }
+                    // NOTE: this is only to stop multiple enemies from attacking/fighting at once. Enemies can't walk through 
+                    // entities (adventurer and other enemies) that they aren't fighting.
+                    else if (e.entityType == Entity.EntityType.Goblin && IsNonFightingEntity(e.pos + e.dir))
+                    {
+                        SwitchDirection(e);
                     }
                     else // move forward is possible
                     {
                         if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
                         {
-                            if (e.waitTicks == e.waitTicksCount)
+                            if (e.entityType == Entity.EntityType.Adventurer)
                             {
-                                e.pos += e.dir + Vector3Int.up;
-                                e.waitTicksCount = 0;
+                                JumpUp(e);
                             }
-                            else
+                            else // enemy hits a jump spot, turn around
                             {
-                                e.waitTicksCount++;
+                                SwitchDirection(e);
                             }
                         }
                         else // forward
                         {
-                            if (e.waitTicks == e.waitTicksCount)
-                            {
-                                e.pos += e.dir;
-                                e.waitTicksCount = 0;
-                            }
-                            else
-                            {
-                                e.waitTicksCount++;
-                            }
+                            MoveForward(e);
                         }
 
                     }
@@ -344,29 +395,81 @@ public class GameBoard : MonoBehaviour
             }
             else // fall 
             {
-                // TODO: ONLY ADVENTURER
-                e.waitTicks = 1; // speed up when falling
-                e.fallCount++;
-                e.pos += Vector3Int.down;
+                if (e.entityType == Entity.EntityType.Adventurer)
+                {
+                    FallDown(e);
+                }
+                else // enemies don't fall
+                {
+                    SwitchDirection(e); 
+                }
             }
 
-            if (e.health <= 0) {
-                Debug.Log("Dead!");
-            }
-            else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+
+            if (e.entityType == Entity.EntityType.Adventurer)
             {
-                if (adventurerHasKey)
+                if (e.health <= 0) // make sure you don't let a dead adventurer get through door
                 {
-                    Debug.Log("You won, dude.");
+                    Debug.Log("Dead!");
                 }
-                else
+                else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
                 {
-                    Debug.Log("Don't have key yet!");
+                    if (adventurerHasKey)
+                    {
+                        Debug.Log("You won, dude.");
+                    }
+                    else
+                    {
+                        Debug.Log("Don't have key yet!");
+                    }
                 }
-            }
-
+            } 
         }
         
+    }
+    // Specific movement logic. In their own functions for (hopefully) readability  
+    void SwitchDirection(Entity e)
+    {
+        if (e.dir == Vector3Int.right)
+        {
+            e.pos += e.dir;
+            e.waitTicksCount = 0;
+            e.dir = Vector3Int.left;
+        }
+        else
+        {
+            e.dir = Vector3Int.right;
+        }
+    }
+    void JumpUp(Entity e)
+    {
+        if (e.waitTicks == e.waitTicksCount)
+        {
+            e.pos += e.dir + Vector3Int.up;
+            e.waitTicksCount = 0;
+        }
+        else
+        {
+            e.waitTicksCount++;
+        }
+    }
+    void FallDown(Entity e)
+    {
+        e.waitTicks = 1; // speed up when falling
+        e.fallCount++;
+        e.pos += Vector3Int.down;
+    }
+    void MoveForward(Entity e)
+    {
+        if (e.waitTicks == e.waitTicksCount)
+        {
+            e.pos += e.dir;
+            e.waitTicksCount = 0;
+        }
+        else
+        {
+            e.waitTicksCount++;
+        }
     }
 
 }
