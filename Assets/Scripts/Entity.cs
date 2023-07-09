@@ -19,8 +19,10 @@ public class Entity : MonoBehaviour
     public int maxWaitTicks;
     public int waitTicks = 3;
     public int waitTicksCount = 0;
+    public int fallCount = 0;
     public int health;
     public int maxHealth;
+
 
     private SpriteRenderer spriteRenderer;
 
