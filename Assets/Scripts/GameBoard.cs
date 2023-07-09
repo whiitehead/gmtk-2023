@@ -200,6 +200,7 @@ public class GameBoard : MonoBehaviour
                 {
                     if (!buildTilemap.HasTile(pos))
                     {
+                        audioPlayer.PlaySound("Make Bridge");
                         Debug.Log("BUILD!!!");
                         buildTilemap.SetTile(pos, buildTile);
                     }
@@ -298,6 +299,10 @@ public class GameBoard : MonoBehaviour
         }
         int damage = (fallCount - 2) / 2;
         Debug.Log("Fall damage: " + damage);
+        if (damage > 0)
+        {
+            audioPlayer.PlaySound("Lose Health");
+        }
         return damage;
     }
 
@@ -309,148 +314,181 @@ public class GameBoard : MonoBehaviour
             {
                 Debug.Log(e.entityType + " is still dead!");
             }
-            else if (e.isFighting)
-            {
-                e.GetComponent<Animator>().SetTrigger("Attack");
-                Debug.Log("Combat");
-                e.fighting.health = e.fighting.health - 1;
-                if (e.fighting.health <= 0)
-                {
-                    e.isFighting = false;
-                    Debug.Log(e.fighting.entityType + "killed in combat dead!");
-                    e.health = e.maxHealth;
-                }
-            }
             else
             {
-                e.GetComponent<Animator>().SetTrigger("Walk");
-            }
-            // take keys
-            if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
-            {
-                // TODO: will need to disappear the key tile one they hit it
-                adventurerHasKey = true;
-            }
-            // Initiate combat
-            if (e.entityType == Entity.EntityType.Adventurer)
-            {
-                foreach (var scenePartner in entities)
+                if (e.isFighting)
                 {
-                    if (scenePartner.entityType == Entity.EntityType.Goblin)
+                    e.GetComponent<Animator>().SetTrigger("Attack");
+                    Debug.Log("Combat");
+                    if (e.entityType == Entity.EntityType.Adventurer)
                     {
-                        if ((scenePartner.pos == (e.pos + e.dir)) && (scenePartner.health > 0))
-                        {
-                            Debug.Log("Fight initiated");
-                            e.isFighting = true;
-                            e.fighting = scenePartner;
-                            
-                            scenePartner.isFighting = true;
-                            scenePartner.fighting = e;
+                        audioPlayer.PlaySound("Sword"); // the adventurer got hit
+                    }
+                    e.fighting.health = e.fighting.health - 1;
+                    if (e.fighting.entityType == Entity.EntityType.Adventurer)
+                    {
+                        audioPlayer.PlaySound("Lost Health"); // the adventurer got hit
+                    }
+                    if (e.fighting.health <= 0)
+                    {
 
-                            if (scenePartner.dir == e.dir)
-                            { // make enemies face their death
-                                if (scenePartner.dir == Vector3Int.right)
-                                {
-                                    scenePartner.dir = Vector3Int.left;
-                                }
-                                else
-                                {
-                                    scenePartner.dir = Vector3Int.right;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            // sorry for this condition caleb
-            if (IsSolid(e.pos + Vector3Int.down)) // grounded
-            {
-                if (e.entityType == Entity.EntityType.Adventurer) 
-                {
-                    e.health = e.health - GetFallDamage(e.fallCount);
-                    e.fallCount = 0;
-                    if (e.health <= 0) // dead from being grounded
-                    {
-                        Debug.Log("Dead from fall!");
-                    }
-                }
-                
-                if (e.health > 0) // not dead from being grounded
-                {
-                    e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
-                    if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
-                    {
-                        // switch directions! 
-                        SwitchDirection(e);
-                    }
-                    // NOTE: this is only to stop multiple enemies from attacking/fighting at once. Enemies can't walk through 
-                    // entities (adventurer and other enemies) that they aren't fighting.
-                    else if (e.entityType == Entity.EntityType.Goblin && IsNonFightingEntity(e.pos + e.dir))
-                    {
-                        SwitchDirection(e);
-                    }
-                    else // move forward is possible
-                    {
-                        if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
+                        if (e.fighting.entityType == Entity.EntityType.Adventurer)
                         {
-                            if (e.entityType == Entity.EntityType.Adventurer)
+                            audioPlayer.PlaySound("Death"); // the adventurer died
+                        }
+                        e.isFighting = false;
+                        Debug.Log(e.fighting.entityType + "killed in combat dead!");
+                        e.health = e.maxHealth;
+                    }
+                }
+                else
+                {
+                    e.GetComponent<Animator>().SetTrigger("Walk");
+                }
+                // take keys
+                if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
+                {
+                    // TODO: will need to disappear the key tile one they hit it
+                    audioPlayer.PlaySound("Pickup Item");
+                    adventurerHasKey = true;
+                }
+                // sorry for this condition caleb
+                if (IsSolid(e.pos + Vector3Int.down)) // grounded
+                {
+                    // Initiate combat
+                    if (e.entityType == Entity.EntityType.Adventurer)
+                    {
+                        foreach (var scenePartner in entities)
+                        {
+                            if (scenePartner.entityType == Entity.EntityType.Goblin)
                             {
-                                JumpUp(e);
-                            }
-                            else // enemy hits a jump spot, turn around
-                            {
-                                SwitchDirection(e);
+                                if ((scenePartner.pos == (e.pos + e.dir)) && (scenePartner.health > 0))
+                                {
+                                    Debug.Log("Fight initiated");
+                                    e.isFighting = true;
+                                    e.fighting = scenePartner;
+                                    
+                                    scenePartner.isFighting = true;
+                                    scenePartner.fighting = e;
+
+                                    if (scenePartner.dir == e.dir)
+                                    { // make enemies face their death
+                                        if (scenePartner.dir == Vector3Int.right)
+                                        {
+                                            scenePartner.dir = Vector3Int.left;
+                                        }
+                                        else
+                                        {
+                                            scenePartner.dir = Vector3Int.right;
+                                        }
+                                    }
+                                }
                             }
                         }
-                        else // forward
+                    }
+                    if (e.entityType == Entity.EntityType.Adventurer) 
+                    {
+                        e.health = e.health - GetFallDamage(e.fallCount);
+                        e.fallCount = 0;
+                        if (e.health <= 0) // dead from being grounded
+                        {
+                            audioPlayer.PlaySound("Death");
+                            Debug.Log("Dead from fall!");
+                        }
+                    }
+                    
+                    if (e.health > 0) // not dead from being grounded
+                    {
+                        e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
+                        if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
+                        {
+                            // switch directions! 
+                            Debug.Log("blocked enemy");
+                            SwitchDirection(e);
+                        }
+                        else if (e.entityType == Entity.EntityType.Goblin && !IsSolid(e.pos + e.dir + Vector3Int.down)) // goblin sees clif
+                        {
+                            Debug.Log("Don't cliff enemy");
+                            SwitchDirection(e);
+                        }
+                        else if (e.entityType == Entity.EntityType.Goblin && !IsSolid(e.pos + Vector3Int.down))
                         {
                             MoveForward(e);
+
+                        }
+                        // NOTE: this is only to stop multiple enemies from attacking/fighting at once. Enemies can't walk through 
+                        // entities (adventurer and other enemies) that they aren't fighting.
+                        else if (e.entityType == Entity.EntityType.Goblin && IsNonFightingEntity(e.pos + e.dir))
+                        {
+                            SwitchDirection(e);
+                        }
+                        else // move forward is possible
+                        {
+                            if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
+                            {
+                                if (e.entityType == Entity.EntityType.Adventurer)
+                                {
+                                    JumpUp(e);
+                                }
+                                else // enemy hits a jump spot, turn around
+                                {
+                                    SwitchDirection(e);
+                                }
+                            }
+                            else // forward
+                            {
+                                MoveForward(e);
+                            }
                         }
 
+                    }         
+                }
+                else if (IsLava(e.pos + Vector3Int.down)) // lava 
+                {
+                    // instant death
+                    audioPlayer.PlaySound("Death");
+                    e.health = 0;
+                }
+                else // fall 
+                {
+                    if (e.entityType == Entity.EntityType.Adventurer)
+                    {
+                        FallDown(e);
                     }
+                    // else // enemies don't fall
+                    // {
+                    //     Debug.Log("Enemy switched at cliff");
+                    //     SwitchDirection(e);
+                    //     e.waitTicksCount = e.maxWaitTicks;
+                    //     MoveForward(e);
+                    // }
+                }
 
-                }         
-            }
-            else if (IsLava(e.pos + Vector3Int.down)) // lava 
-            {
-                // instant death
-                e.health = 0;
-            }
-            else // fall 
-            {
+
                 if (e.entityType == Entity.EntityType.Adventurer)
                 {
-                    FallDown(e);
-                }
-                else // enemies don't fall
-                {
-                    SwitchDirection(e); 
-                }
+                    if (e.health <= 0) // make sure you don't let a dead adventurer get through door
+                    {
+                        Debug.Log("Dead!");
+                    }
+                    else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+                    {
+                        if (adventurerHasKey)
+                        {
+                            audioPlayer.PlaySound("Chimes");
+                            Debug.Log("You won, dude.");
+                            isSimulating = false;
+                            var nextscene = Int32.Parse(SceneManager.GetActiveScene().name.Substring(6)) + 1;
+                            SceneManager.LoadScene($"Level {nextscene}");
+                        }
+                        else
+                        {
+                            audioPlayer.PlaySound("Stone Door");
+                            Debug.Log("Don't have key yet!");
+                        }
+                    }
+                } 
             }
-
-
-            if (e.entityType == Entity.EntityType.Adventurer)
-            {
-                if (e.health <= 0) // make sure you don't let a dead adventurer get through door
-                {
-                    Debug.Log("Dead!");
-                }
-                else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
-                {
-                    if (adventurerHasKey)
-                    {
-                        audioPlayer.PlaySound("Chimes");
-                        Debug.Log("You won, dude.");
-                        isSimulating = false;
-                        var nextscene = Int32.Parse(SceneManager.GetActiveScene().name.Substring(6)) + 1;
-                        SceneManager.LoadScene($"Level {nextscene}");
-                    }
-                    else
-                    {
-                        Debug.Log("Don't have key yet!");
-                    }
-                }
-            } 
         }
         
     }
@@ -485,6 +523,7 @@ public class GameBoard : MonoBehaviour
         e.waitTicks = 1; // speed up when falling
         e.fallCount++;
         e.pos += Vector3Int.down;
+        audioPlayer.PlaySound("Fall");
     }
     void MoveForward(Entity e)
     {
@@ -492,6 +531,7 @@ public class GameBoard : MonoBehaviour
         {
             e.pos += e.dir;
             e.waitTicksCount = 0;
+            audioPlayer.PlaySound("Step");
         }
         else
         {
