@@ -8583,7 +8583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd357bd15cab4313a98353edbd29c9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildTile: {fileID: 11400000, guid: 63de924b419d34569811191d5e22cec6, type: 2}
+  buildTile: {fileID: 11400000, guid: 3c3b8a094126f4aaabe98ff52b83c687, type: 2}
   gameTilemap: {fileID: 858193283}
   buildTilemap: {fileID: 1855351134}
   entityPrefabs:
