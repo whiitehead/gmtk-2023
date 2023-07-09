@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 
 public class GameBoard : MonoBehaviour
 {
+    public static float tickWaitTime = 0.1f;
 
     public Tile buildTile;
     public Tilemap gameTilemap;
@@ -19,7 +20,6 @@ public class GameBoard : MonoBehaviour
     private Camera cam;
     private int tickCount = 0;
     private bool isSimulating = false;
-    private float tickWaitTime = 0.5f;
     private float timeSinceTick = 0;
     
     private List<Entity> entities;
@@ -204,7 +204,7 @@ public class GameBoard : MonoBehaviour
                 {
                     if (e.waitTicks == e.waitTicksCount)
                     {
-                        e.pos += e.dir * e.speed;
+                        e.pos += e.dir;
                         e.waitTicksCount = 0;
                     }
                     else
