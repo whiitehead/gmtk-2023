@@ -22,7 +22,7 @@ public class GameBoard : MonoBehaviour
     private bool isSimulating = false;
     private float timeSinceTick = 0;
 
-    private bool adventurerHasKey;
+    private bool adventurerHasKey = true;
     
     private List<Entity> entities;
     
