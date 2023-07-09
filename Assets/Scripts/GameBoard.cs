@@ -277,7 +277,7 @@ public class GameBoard : MonoBehaviour
                 // TODO: will need to disappear the key tile
                 adventurerHasKey = true;
             }
-            else if (IsSolid(e.pos + Vector3Int.down)) // grounded
+            if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
                 Debug.Log("Health before fall: " + e.health);
                 // TODO: ONLY ADVENTURER
@@ -353,7 +353,7 @@ public class GameBoard : MonoBehaviour
             if (e.health <= 0) {
                 Debug.Log("Dead!");
             }
-            else (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+            else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
             {
                 if (adventurerHasKey)
                 {
