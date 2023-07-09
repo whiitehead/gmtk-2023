@@ -37,6 +37,9 @@ public class GameBoard : MonoBehaviour
         NoBuildSpace,
         StartButton,
         AdventurerStart,
+
+        EnemyStart,
+
         OutOfBounds,
         Lava,
         Door,
@@ -73,6 +76,10 @@ public class GameBoard : MonoBehaviour
             else if (tile.name == "AdventurerStart")
             {
                 tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.AdventurerStart;
+            }
+            else if (tile.name == "EnemyStart")
+            {
+                tileTypes[tileTypesIndices.x, tileTypesIndices.y] = TileType.EnemyStart;
             }
             else if (tile.name == "StartButton")
             {
@@ -215,12 +222,8 @@ public class GameBoard : MonoBehaviour
                 var entity = go.GetComponent<Entity>();
                 entity.pos = pos;
                 entity.dir = Vector3Int.right;
-                // TODO: change this later. Not everything has health of 3.
-                entity.health = 3;
                 entities.Add(entity);
             }
-            // TODO: maybe check which entity type here and just hard-code attributes like health/maxTicks
-            // e.g if entityType == ""Adventurer"
         }
 
         // return null;
@@ -237,6 +240,10 @@ public class GameBoard : MonoBehaviour
                 if (tileTypes[x, y] == TileType.AdventurerStart)
                 {
                     InstantiateEntity(Entity.EntityType.Adventurer, new Vector3Int(x, y) + gameTilemap.cellBounds.position);
+                }
+                if (tileTypes[x, y] == TileType.EnemyStart)
+                {
+                    InstantiateEntity(Entity.EntityType.Goblin, new Vector3Int(x, y) + gameTilemap.cellBounds.position);
                 }
             }
         }
@@ -272,20 +279,18 @@ public class GameBoard : MonoBehaviour
             {
              Debug.Log(e.entityType + "is still dead!");
             }
-            if (e.entityType == "Adventurer" && IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            if (e.entityType == Entity.EntityType.Adventurer && IsKey(e.pos)) // TODO: ONLY ADVENTURER
             {
-                // TODO: will need to disappear the key tile
+                // TODO: will need to disappear the key tile one they hit it
                 adventurerHasKey = true;
             }
             
             if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
-                Debug.Log("Health before fall: " + e.health);
-                if (e.entityType == "Adventurer") 
+                if (e.entityType == Entity.EntityType.Adventurer) 
                 {
                     e.health = e.health - GetFallDamage(e.fallCount);
                     e.fallCount = 0;
-                    Debug.Log("Health after fall: " + e.health);
                     if (e.health <= 0) // dead from being grounded
                     {
                         Debug.Log("Dead from fall!");
@@ -298,42 +303,24 @@ public class GameBoard : MonoBehaviour
                     if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
                     {
                         // switch directions! 
-                        if (e.dir == Vector3Int.right)
-                        {
-                            e.pos += e.dir;
-                            e.waitTicksCount = 0;
-                            e.dir = Vector3Int.left;
-                        }
-                        else
-                        {
-                            e.dir = Vector3Int.right;
-                        }
+                        SwitchDirection(e);
                     }
                     else // move forward is possible
                     {
                         if (IsSolid(e.pos + e.dir)) // jump // TODO: ONLY ADVENTURER
                         {
-                            if (e.waitTicks == e.waitTicksCount)
+                            if (e.entityType == Entity.EntityType.Adventurer)
                             {
-                                e.pos += e.dir + Vector3Int.up;
-                                e.waitTicksCount = 0;
+                                JumpUp(e);
                             }
-                            else
+                            else // enemy hits a jump spot, turn around
                             {
-                                e.waitTicksCount++;
+                                SwitchDirection(e);
                             }
                         }
                         else // forward
                         {
-                            if (e.waitTicks == e.waitTicksCount)
-                            {
-                                e.pos += e.dir;
-                                e.waitTicksCount = 0;
-                            }
-                            else
-                            {
-                                e.waitTicksCount++;
-                            }
+                            MoveForward(e);
                         }
 
                     }
@@ -347,29 +334,81 @@ public class GameBoard : MonoBehaviour
             }
             else // fall 
             {
-                // TODO: ONLY ADVENTURER
-                e.waitTicks = 1; // speed up when falling
-                e.fallCount++;
-                e.pos += Vector3Int.down;
+                if (e.entityType == Entity.EntityType.Adventurer)
+                {
+                    FallDown(e);
+                }
+                else // enemies don't fall
+                {
+                    SwitchDirection(e); 
+                }
             }
 
-            if (e.health <= 0) {
-                Debug.Log("Dead!");
-            }
-            else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+
+            if (e.entityType == Entity.EntityType.Adventurer)
             {
-                if (adventurerHasKey)
+                if (e.health <= 0) // make sure you don't let a dead adventurer get through door
                 {
-                    Debug.Log("You won, dude.");
+                    Debug.Log("Dead!");
                 }
-                else
+                else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
                 {
-                    Debug.Log("Don't have key yet!");
+                    if (adventurerHasKey)
+                    {
+                        Debug.Log("You won, dude.");
+                    }
+                    else
+                    {
+                        Debug.Log("Don't have key yet!");
+                    }
                 }
-            }
-
+            } 
         }
         
+    }
+    // Specific movement logic. In their own functions for (hopefully) readability  
+    void SwitchDirection(Entity e)
+    {
+        if (e.dir == Vector3Int.right)
+        {
+            e.pos += e.dir;
+            e.waitTicksCount = 0;
+            e.dir = Vector3Int.left;
+        }
+        else
+        {
+            e.dir = Vector3Int.right;
+        }
+    }
+    void JumpUp(Entity e)
+    {
+        if (e.waitTicks == e.waitTicksCount)
+        {
+            e.pos += e.dir + Vector3Int.up;
+            e.waitTicksCount = 0;
+        }
+        else
+        {
+            e.waitTicksCount++;
+        }
+    }
+    void FallDown(Entity e)
+    {
+        e.waitTicks = 1; // speed up when falling
+        e.fallCount++;
+        e.pos += Vector3Int.down;
+    }
+    void MoveForward(Entity e)
+    {
+        if (e.waitTicks == e.waitTicksCount)
+        {
+            e.pos += e.dir;
+            e.waitTicksCount = 0;
+        }
+        else
+        {
+            e.waitTicksCount++;
+        }
     }
 
 }
