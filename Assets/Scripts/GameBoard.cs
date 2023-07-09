@@ -24,12 +24,14 @@ public class GameBoard : MonoBehaviour
     private float timeSinceTick = 0;
 
     private bool adventurerHasKey = true;
+    private AudioPlayer audioPlayer;
     
     private List<Entity> entities;
     
 
     private const int LEFT_CLICK = 0;
     private const int RIGHT_CLICK = 1;
+    
 
     public enum TileType
     {
@@ -50,9 +52,7 @@ public class GameBoard : MonoBehaviour
     void Start()
     {
 
-
-
-
+        audioPlayer = GetComponentInChildren<AudioPlayer>();
         grid = GetComponent<Grid>();
         cam = Camera.main;
         tileTypes = new TileType[gameTilemap.cellBounds.size.x, gameTilemap.cellBounds.size.y];
@@ -439,6 +439,7 @@ public class GameBoard : MonoBehaviour
                 {
                     if (adventurerHasKey)
                     {
+                        audioPlayer.PlaySound("Chimes");
                         Debug.Log("You won, dude.");
                         isSimulating = false;
                         var nextscene = Int32.Parse(SceneManager.GetActiveScene().name.Substring(6)) + 1;
