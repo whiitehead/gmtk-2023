@@ -272,24 +272,27 @@ public class GameBoard : MonoBehaviour
             {
              Debug.Log(e.entityType + "is still dead!");
             }
-            else if (IsKey(e.pos)) // TODO: ONLY ADVENTURER
+            if (e.entityType == "Adventurer" && IsKey(e.pos)) // TODO: ONLY ADVENTURER
             {
                 // TODO: will need to disappear the key tile
                 adventurerHasKey = true;
             }
+            
             if (IsSolid(e.pos + Vector3Int.down)) // grounded
             {
                 Debug.Log("Health before fall: " + e.health);
-                // TODO: ONLY ADVENTURER
-                e.health = e.health - GetFallDamage(e.fallCount);
-                e.fallCount = 0;
-                Debug.Log("Health after fall: " + e.health);
-                if (e.health <= 0) // dead from being grounded
+                if (e.entityType == "Adventurer") 
                 {
-                    Debug.Log("Dead from fall!");
+                    e.health = e.health - GetFallDamage(e.fallCount);
+                    e.fallCount = 0;
+                    Debug.Log("Health after fall: " + e.health);
+                    if (e.health <= 0) // dead from being grounded
+                    {
+                        Debug.Log("Dead from fall!");
+                    }
                 }
                 
-                else // not dead from being grounded
+                if (e.health > 0) // not dead from being grounded
                 {
                     e.waitTicks = e.maxWaitTicks; // always move at maxWaitTicks when grounded
                     if (IsSolid(e.pos + e.dir + Vector3Int.up)) // face blocked
