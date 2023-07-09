@@ -353,7 +353,7 @@ public class GameBoard : MonoBehaviour
             if (e.health <= 0) {
                 Debug.Log("Dead!");
             }
-            else (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
+            else if (IsDoor(e.pos) || IsDoor(e.pos + e.dir)) // TODO: ONLY ADVENTURER
             {
                 if (adventurerHasKey)
                 {
