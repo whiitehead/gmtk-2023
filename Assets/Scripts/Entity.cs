@@ -68,7 +68,10 @@ public class Entity : MonoBehaviour
         spriteRenderer.flipX = dir != Vector3Int.right;
 
         var target = new Vector3(pos.x + 0.5f, pos.y, 0);
-        transform.Translate(((target - transform.position).normalized * Time.deltaTime / waitTicks) / GameBoard.tickWaitTime);
+        
+        
+        
+        transform.Translate((target - transform.position) * Time.deltaTime / (waitTicks * GameBoard.tickWaitTime));
         
         
     }

@@ -13,9 +13,10 @@ public class Scaffoldinger : MonoBehaviour
         src = GetComponent<AudioSource>();
         DontDestroyOnLoad(gameObject);
     }
-
+    
     private void Awake()
     {
         src.Play();
     }
+    
 }
