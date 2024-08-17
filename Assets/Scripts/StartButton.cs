@@ -11,7 +11,7 @@ public class StartButton : MonoBehaviour
 
     private void Start()
     {
-        board = GetComponentInParent<GameBoard>();
+        board = FindObjectOfType<GameBoard>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent < BoxCollider2D>();
     }

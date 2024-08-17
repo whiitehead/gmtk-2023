@@ -8,7 +8,7 @@ public class StopButton : MonoBehaviour
 
     private void Start()
     {
-        board = GetComponentInParent<GameBoard>();
+        board = FindObjectOfType<GameBoard>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent < BoxCollider2D>();
     }
